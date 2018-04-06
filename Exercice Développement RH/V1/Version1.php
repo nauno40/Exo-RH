@@ -4,11 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>Document</title>
 </head>
 <body>
 
+<form>
+  <div class="form-group">
 
+
+<!--Début du tableau -->
+   <table class='table table-striped'>
+            <tr>
+                <th>ID</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>Date D'embauche</th>
+                <th>Date Fin</th>
+                <th>Congès Pris</th>
+                <th>Congès Disponibles</th>
+            </tr> 
+  
 
  <!-- Attention /!\ Zone PHP -->
     <?php
@@ -35,25 +52,33 @@
 
 
 
-    //Récupération des données présentes dans le tables : "salaries" & "conges" :
-    $salaries = $bdd->query('SELECT * FROM salaries, conges');
 
-    //pour afficher les salaries
+    //Récupération des données présentes dans le tables : "salaries" & "conges" :
+    $resultat = $bdd->query('SELECT id, firstName, lastName, address, dateBegin, dateEnd, pris, acquis   FROM salaries INNER JOIN conges WHERE salaries.id = conges.salaries_id');
+    //Ne pas oublier FETCH_ASSOC sinon, risques de doublons.
+    $salaries = $resultat->fetchAll(PDO::FETCH_ASSOC);
+    //Pour chaque Salarié dans la table Salariés
     foreach($salaries as $salarie){
-        //$article est un tableau qui contient les données : id, title, content ....
-        echo '<td>';
-        foreach($salarie as $cle=>$data){
-            echo '<td>'.$cle . ' : ' .$data.'</td>';
-        }
-        echo '</td>';
+        echo "<tr>";
+
+            //Pour chaque Données dans de chaque Salarié
+            foreach($salarie as $cle=>$data){
+                echo "<td>$data</td>";
+            }
+        
+        echo "</tr>";
     }
 
 
 
-
-
-
+    //Pour la V2, penser à créer un autoloader a la main
 
     ?>
+
+    
+    </table>
+  </div>
+</form>
+   
 </body>
 </html>
