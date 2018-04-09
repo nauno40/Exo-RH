@@ -10,20 +10,21 @@
 <body>
 
 <form>
+    
   <h2 class="form-group">Exercice de Développement RH</h2>
 
   <div class="form-group">
 
 <!--Début du tableau -->
    <table class='table table-striped'>
-        <tr>
+        <tr align="center">
             <th>ID</th>
             <th>Prénom</th>
             <th>Nom</th>
             <th>Adresse</th>
             <th>Date D'embauche</th>
             <th>Date Fin</th>
-            <th>Congès Pris</th>
+            <th>Congés Pris</th>
             <th>Congès Disponibles</th>
         </tr> 
   
@@ -48,7 +49,7 @@
         (PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
     }
     catch (Exception $e){
-        die('Erreur : ' . $e->getMessage());
+        die(header('Location: '. dirname(__DIR__).'/erreur.php?erreur=503'));
     }
 
 
@@ -64,7 +65,7 @@
 
             //Pour chaque Données dans de chaque Salarié
             foreach($salarie as $cle=>$data){
-                echo "<td>$data</td>";
+                echo "<td align='center'>$data</td>";
             }
         
         echo "</tr>";
