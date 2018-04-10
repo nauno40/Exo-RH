@@ -8,9 +8,14 @@
     <title>Document</title>
 </head>
 <body>
+    
+
+
+    
 
 <form>
-  <h2 class="form-group">Exercice de Développement RH</h2>
+  <h2 class="form-group">Exercice de Développement RH</h2><hr>
+
 
   <div class="form-group">
 
@@ -22,7 +27,7 @@
             <th>Nom</th>
             <th>Adresse</th>
             <th>Date D'embauche</th>
-            <th>Date Fin</th>
+            <th>Date de Fin de Contrat</th>
             <th>Congès Pris</th>
             <th>Congès Disponibles</th>
         </tr> 
@@ -36,31 +41,65 @@
     Autoloader::register();
 
 
+    //Appel de la classe PDO 
+    $instanceSalaries = new Salaries();
 
-    $instancePDO = new MyPDO();
-    $salaries = $instancePDO->findAll();
 
-    
 
-    foreach($salaries as $salarie){
-        echo "<tr>";
-
-            //Pour chaque Données dans de chaque Salarié
-            foreach($salarie as $cle=>$data){
-                echo "<td align='center'>$data</td>";
-            }
-        
-        echo "</tr>";
+    //Pagination Réalisation :
+    $data = $instanceSalaries->count();
+    $nbSalaries = $data['nb'];
+    $parPage = 3; //Nombre de lignes par page 
+    $nbPage = ceil($nbSalaries/$parPage);
+    $courantePage = 1;  //Page courante
+   
+    if(isset($_GET['p'])){
+        $courantePage = $_GET['p'];
+    }
+    else{
+        $courantePage = 1;
     }
 
 
+    //Appel de la méthode FindAll
+    $salaries = $instanceSalaries->findAll($courantePage, $parPage);
+
+    //Affichage des différentes données des Salariés 
+    foreach($salaries as $salarie){
+        
+        echo "<tr>";
+        echo "<td align='center'>".$salarie->getId()."</td>";
+        echo "<td align='center'>".$salarie->getFirstName()."</td>";
+        echo "<td align='center'>".$salarie->getLastName()."</td>";
+        echo "<td align='center'>".$salarie->getAddress()."</td>";
+        echo "<td align='center'>".$salarie->getDateBegin()."</td>";
+        echo "<td align='center'>".$salarie->getDateEnd()."</td>"; 
+        echo "<td align='center'>".$salarie->getAcquis()."</td>";        
+        echo "<td align='center'>".$salarie->getPris()."</td>";
+        
+        echo "</tr>";
+        
+    }
 
     ?>
 
-    
     </table>
+
+    <ul class="pagination pagination-sm justify-content-center">
+        <li class="page-item disabled">
+            <?php
+                //Pagination Affichage :
+                
+                for($i=1;$i<=$nbPage;$i++){
+                    echo "<li class='page-item'><a class='page-link' href='Version2.php?p=$i'> $i </a>";
+                }
+            ?>
+        </li>
+    </ul>    
+
+
   </div>
 </form>
-   
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <?php
 
-class Salaries implements PDO{
+class Salaries extends MyPDO{
 
     //déclaration des attributs
     private $id;
@@ -9,6 +9,12 @@ class Salaries implements PDO{
     private $address;
     private $dateBegin;
     private $dateEnd;
+    private $acquis;
+    private $pris;
+    private $tableName = 'salaries';
+
+
+
 
     //Déclaration des Getters 
     public function getId(){
@@ -33,6 +39,14 @@ class Salaries implements PDO{
     
     public function getDateEnd(){
         return $this->dateEnd;
+    }    
+
+    public function getAcquis(){
+        return $this->acquis;
+    }
+        
+    public function getPris(){
+        return $this->pris;
     }
 
     //setters
@@ -50,21 +64,108 @@ class Salaries implements PDO{
 
     public function setLastName($lastName){
         if(!empty($lastName) AND is_string($lastName)){
-            $this->$lastName = $lastName; 
+            $this->lastName = $lastName; 
         }
     }
 
     public function setAddress($address){
         if(!empty($address) AND is_string($address)){
-            $this->daddress = $address; 
+            $this->address = $address; 
         }
     }
 
     public function setDateBegin($dateBegin){        
-            $this->$dateBegin = $dateBegin;         
+            $this->dateBegin = $dateBegin;         
     }
 
     public function setDateEnd($dateEnd){        
-        $this->$dateEnd = $dateEnd;         
+        $this->dateEnd = $dateEnd;         
     }
+
+    public function setAcquis($acquis){        
+        $this->acquis = $acquis;         
+    }
+
+    public function setPris($pris){        
+        $this->pris = $pris;         
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function count(){
+        $resultat = self::$MyPDO->prepare("SELECT COUNT(id) as nb FROM $this->tableName");
+        $resultat->execute();
+        $data = $resultat->fetch(PDO::FETCH_ASSOC);
+        return $data;
+    }
+
+
+    //Récupération des données présentes dans le tables : "salaries" & "conges" :
+    public function findAll($courantePage,$parPage){
+
+        $all = array();
+
+        $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
+        $resultat->execute();
+        $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
+
+        //Transformation en Objet;
+        foreach($datas as $data){
+
+            $salarie = new Salaries();
+            $salarie->setId($data['id']);
+            $salarie->setFirstName($data['firstName']);
+            $salarie->setLastName($data['lastName']);
+            $salarie->setAddress($data['address']);
+            $salarie->setDateBegin($data['dateBegin']);
+            $salarie->setAcquis($data['acquis']);
+            $salarie->setPris($data['pris']);
+
+            if($data['dateEnd'] == "0000-00-00"){
+                $salarie->setDateEnd = NULL;
+            }else{
+                $salarie->setDateEnd($data['dateEnd']);
+            }
+
+            $all[] = $salarie;
+            
+        }
+        
+        return $all;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
