@@ -27,7 +27,7 @@ class MyPDO {
 
     //Récupération des données présentes dans le tables : "salaries" & "conges" :
     public function findAll(){
-        $resultat = $this->bdd->prepare("SELECT id, firstName, lastName, address, dateBegin, dateEnd, pris, acquis FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id");
+        $resultat = $this->bdd->prepare("SELECT id, firstName, lastName, address, dateBegin, dateEnd, pris, acquis FROM salaries INNER JOIN conges WHERE salaries.id = conges.salaries_id");
         $resultat->execute();
         $data = $resultat->fetchAll(PDO::FETCH_ASSOC);
         return $data;
