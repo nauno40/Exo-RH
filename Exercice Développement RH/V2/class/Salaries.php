@@ -91,14 +91,13 @@ class Salaries extends MyPDO{
     }
 
 
-
-
-
-
-
-
-
-
+    // __  __      _   _               _      
+    // |  \/  | ___| |_| |__   ___   __| | ___ 
+    // | |\/| |/ _ \ __| '_ \ / _ \ / _` |/ _ \
+    // | |  | |  __/ |_| | | | (_) | (_| |  __/
+    // |_|  |_|\___|\__|_| |_|\___/ \__,_|\___|
+                                            
+   
 
     public function count(){
         $resultat = self::$MyPDO->prepare("SELECT COUNT(id) as nb FROM $this->tableName");
@@ -134,12 +133,57 @@ class Salaries extends MyPDO{
             }else{
                 $salarie->setDateEnd($data['dateEnd']);
             }
-
             $all[] = $salarie;
-            
         }
-        
         return $all;
+    }
+
+    public function Rechercher(){
+
+        $all = array();
+
+            // Je commence à séparer les différents mots clés
+            $keywords = explode(' ', $_POST['keywords']);
+            // J'initialise ma variable pour la requête SQL
+            $like = "";
+            foreach($keywords as $keyword) {
+                // Si le mot clé est supérieur à 3 caractères (tu n'es pas obligé)
+                if(strlen($keyword) >= 3) {
+                    // Je concatène
+                    // Le % en SQL est un joker, ça remplace n'importe quel caractère. Si tu veux que se soit une recherche explicite retire les %
+                    $like.= " lastName LIKE '%".$keyword."%' OR";
+                }
+            }
+            // Je retire le dernier OR qui n'a pas lieu d'être
+            $like = substr($like, 0, strlen($like) - 3);
+            // Connexion à ta base de données
+            $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND WHERE lastName LIKE ".$like);
+            $resultat->execute();
+            $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
+
+            //Transformation en Objet;
+            foreach($datas as $data){
+
+                $salarie = new Salaries();
+                $salarie->setId($data['id']);
+                $salarie->setFirstName($data['firstName']);
+                $salarie->setLastName($data['lastName']);
+                $salarie->setAddress($data['address']);
+                $salarie->setDateBegin($data['dateBegin']);
+                $salarie->setAcquis($data['acquis']);
+                $salarie->setPris($data['pris']);
+
+                if($data['dateEnd'] == "0000-00-00"){
+                    $salarie->setDateEnd = NULL;
+                }else{
+                    $salarie->setDateEnd($data['dateEnd']);
+                }
+                $all[] = $salarie;
+            }
+            return $all;
+
+        }
+
     }
 
 
@@ -166,6 +210,3 @@ class Salaries extends MyPDO{
 
 
 
-
-
-}
