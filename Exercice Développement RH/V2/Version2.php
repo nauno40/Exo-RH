@@ -21,11 +21,11 @@
 
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">Accueil<span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="version2.php">Accueil<span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="#">Ajouter</a>
 
-            <form class="form-inline" method="POST" action="version2.php">
-                <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" name="keywords">
+            <form class="form-inline" method="GET" action="version2.php">
+                <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" name="key">
                 <button class="btn bg my-2 my-sm-0" type="submit">Go !</button>
             </form>
 
@@ -60,7 +60,7 @@
     Autoloader::register();
 
 
-    //Appel de la classe PDO 
+    //Appel de la classe Salaries
     $instanceSalaries = new Salaries();
 
 
@@ -81,13 +81,10 @@
 
     
 
-    
-    
 
-
-
-    if(isset($_POST['keywords']) && !empty($_POST)){
-        $salaries = $instanceSalaries->Rechercher();
+    //Si la variable >POST existe on lance la recherche sinon, on affiche tout
+    if(isset($_GET['key']) && !empty($_GET)){
+        $salaries = $instanceSalaries->Rechercher($_GET['key']);
     }
     else{
         //Appel de la méthode FindAll

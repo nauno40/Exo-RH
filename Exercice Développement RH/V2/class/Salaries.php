@@ -12,6 +12,7 @@ class Salaries extends MyPDO{
     private $acquis;
     private $pris;
     private $tableName = 'salaries';
+    
 
 
 
@@ -98,7 +99,7 @@ class Salaries extends MyPDO{
     // |_|  |_|\___|\__|_| |_|\___/ \__,_|\___|
                                             
    
-
+    // Permet d'avoir une pagination automatique 
     public function count(){
         $resultat = self::$MyPDO->prepare("SELECT COUNT(id) as nb FROM $this->tableName");
         $resultat->execute();
@@ -138,26 +139,15 @@ class Salaries extends MyPDO{
         return $all;
     }
 
-    public function Rechercher(){
+
+    //Permettre la recherche en fonction du Nom de Famille 
+    public function Rechercher($key){
 
         $all = array();
 
-            // Je commence à séparer les différents mots clés
-            $keywords = explode(' ', $_POST['keywords']);
-            // J'initialise ma variable pour la requête SQL
-            $like = "";
-            foreach($keywords as $keyword) {
-                // Si le mot clé est supérieur à 3 caractères (tu n'es pas obligé)
-                if(strlen($keyword) >= 3) {
-                    // Je concatène
-                    // Le % en SQL est un joker, ça remplace n'importe quel caractère. Si tu veux que se soit une recherche explicite retire les %
-                    $like.= " lastName LIKE '%".$keyword."%' OR";
-                }
-            }
-            // Je retire le dernier OR qui n'a pas lieu d'être
-            $like = substr($like, 0, strlen($like) - 3);
             // Connexion à ta base de données
-            $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND WHERE lastName LIKE ".$like);
+            $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges ON salaries.id = conges.salaries_id WHERE lastName LIKE :lastName");
+            $result->bindValue(':lastName', '%' . $key . '%');
             $resultat->execute();
             $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
@@ -182,31 +172,38 @@ class Salaries extends MyPDO{
             }
             return $all;
 
-        }
+    }
+
+    // Pouvoir modifier les Congès 
+    public function Modifier(){
+
+        $resultat = $bdd->prepare('UPDATE conges SET acquis = :acquis, pris = :pris');
+        $resultat->bindValue(':acquis', $_GET['acquisAModifier']);
+        $resultat->bindValue(':pris', $_GET['prisAModifier']);
+        $resultat->execute();
+
 
     }
 
+    // Ajouter un Salarié, il commence avec 0 congès acquis 
+    public function Ajouter(){
 
+        $resultat = $bdd->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
+        $resultat->bindValue(':firstName', $_GET['firstName']);
+        $resultat->bindValue(':LastName', $_GET['LastName']);
+        $resultat->bindValue(':address', $_GET['address']);
+        $resultat->bindValue(':dateBegin', $_GET['dateBegin']);
+        $resultat->bindValue(':dateEnd', $_GET['dateEnd']);
+        $resultat->execute();
 
+    }
 
+    // Pemettre de Supprimer un salarié mais pas définitivement :
+    // Peut être rajouter un champ true/false dans la bbd qui lui permettrai ou non de s'afficher dans le findALl 
+    // A méditer.
 
+    public function Supprimer(){
 
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
