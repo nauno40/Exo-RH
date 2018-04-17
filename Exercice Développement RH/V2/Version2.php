@@ -48,7 +48,7 @@
                     <th>Date D'embauche</th>
                     <th>Date de Fin de Contrat</th>
                     <th>Congès Pris</th>
-                    <th>Congès Disponibles</th>
+                    <th>Congès Acquis</th>
                 </tr>
 
 
