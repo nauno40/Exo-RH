@@ -175,12 +175,18 @@ class Salaries extends MyPDO{
     }
 
     // Pouvoir modifier les Congès 
+    //Idée AJAX :
+    
+    // clic sur le bouton modifier -> le texte des td se transforme en input (ou textarea, ou select, ou checkbox, ou radio)
+    // -> l'utilisateur fait ses modifications -> il enregistre -> aller/retour Ajax pour mettre à jour la ligne en base
+    // transforme les inputs en simple texte
+
     public function Modifier(){
 
-        // // $resultat = $bdd->prepare('UPDATE conges SET acquis = :acquis, pris = :pris');
-        // // $resultat->bindValue(':acquis', $_GET['acquisAModifier']);
-        // // $resultat->bindValue(':pris', $_GET['prisAModifier']);
-        // $resultat->execute();
+        $resultat = $bdd->prepare('UPDATE conges SET acquis = :acquis, pris = :pris');
+        $resultat->bindValue(':acquis', $_GET['acquisAModifier']);
+        $resultat->bindValue(':pris', $_GET['prisAModifier']);
+        $resultat->execute();
 
 
     }
@@ -188,13 +194,13 @@ class Salaries extends MyPDO{
     // Ajouter un Salarié, il commence avec 0 congès acquis 
     public function Ajouter(){
 
-        // $resultat = $bdd->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
-        // $resultat->bindValue(':firstName', $_GET['firstName']);
-        // $resultat->bindValue(':LastName', $_GET['LastName']);
-        // $resultat->bindValue(':address', $_GET['address']);
-        // $resultat->bindValue(':dateBegin', $_GET['dateBegin']);
-        // $resultat->bindValue(':dateEnd', $_GET['dateEnd']);
-        // $resultat->execute();
+        $resultat = $bdd->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
+        $resultat->bindValue(':firstName', $_GET['firstName']);
+        $resultat->bindValue(':LastName', $_GET['LastName']);
+        $resultat->bindValue(':address', $_GET['address']);
+        $resultat->bindValue(':dateBegin', $_GET['dateBegin']);
+        $resultat->bindValue(':dateEnd', $_GET['dateEnd']);
+        $resultat->execute();
 
     }
 
