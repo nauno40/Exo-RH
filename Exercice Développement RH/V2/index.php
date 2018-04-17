@@ -13,7 +13,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
-        <a class="navbar-brand" href="Version2.php">Exercice de Développement RH</a>
+        <a class="navbar-brand" href="index.php">Exercice de Développement RH</a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -22,9 +22,9 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
             
-            <a class="nav-item nav-link" href="#">Ajouter</a>
+            <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
 
-            <form class="form-inline" method="GET" action="version2.php">
+            <form class="form-inline" method="GET" action="index.php">
                 <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" name="key">
                 <button class="btn bg my-2 my-sm-0" type="submit">Go !</button>
             </form>
@@ -49,6 +49,7 @@
                     <th>Date de Fin de Contrat</th>
                     <th>Congès Pris</th>
                     <th>Congès Acquis</th>
+                    <th>Modifications</th>
                 </tr>
 
 
@@ -68,7 +69,7 @@
     //Pagination Réalisation :
     $data = $instanceSalaries->count();
     $nbSalaries = $data['nb'];
-    $parPage = 12; //Nombre de lignes par page 
+    $parPage = 6; //Nombre de lignes par page 
     $nbPage = ceil($nbSalaries/$parPage);
     $courantePage = 1;  //Page courante
    
@@ -104,35 +105,31 @@
         echo "<td align='center'>".$salarie->getAddress()."</td>";
         echo "<td align='center'>".$salarie->getDateBegin()."</td>";
         echo "<td align='center'>".$salarie->getDateEnd()."</td>"; 
-        echo "<td align='center'>".$salarie->getAcquis()."</td>";        
-        echo "<td align='center'>".$salarie->getPris()."</td>";
-        
+        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getAcquis() . " name='key'></td>";       
+        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getPris() . " name='key'></td>";
+        echo "<td align='center'><input class='form-control mr-sm-2' type='submit' value='Modifier'></td>";
         echo "</tr>";
         
     }
 
 
-
-
     ?>
-
             </table>
-
 
             <!-- Pagination Affichage : -->
             <ul class="pagination pagination-sm justify-content-center">
                 <li class="page-item disabled">
                     <?php
                         for($i=1;$i<=$nbPage;$i++){
-                            echo "<li class='page-item'><a class='page-link' href='Version2.php?p=$i'> $i </a>";
+                            echo "<li class='page-item'><a class='page-link' href='index.php?p=$i'> $i </a>";
                         }
                     ?>
                 </li>
             </ul>
-
-
         </div>
     </form>
+
+
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </body>
 
