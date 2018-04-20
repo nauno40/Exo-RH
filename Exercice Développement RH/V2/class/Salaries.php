@@ -141,7 +141,7 @@ class Salaries extends MyPDO{
 
 
     //Permettre la recherche en fonction du Nom de Famille 
-    public function Rechercher($key){
+    public function FindByLastName($key){
 
         $all = array();
 
@@ -181,7 +181,7 @@ class Salaries extends MyPDO{
     // -> l'utilisateur fait ses modifications -> il enregistre -> aller/retour Ajax pour mettre à jour la ligne en base
     // transforme les inputs en simple texte
 
-    public function Modifier(){
+    public function Update($id){
 
         $resultat = $bdd->prepare('UPDATE conges SET acquis = :acquis, pris = :pris');
         $resultat->bindValue(':acquis', $_GET['acquisAModifier']);
@@ -192,7 +192,7 @@ class Salaries extends MyPDO{
     }
 
     // Ajouter un Salarié, il commence avec 0 congès acquis 
-    public function Ajouter(){
+    public function AddSalarie(){
 
         $resultat = $bdd->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
         $resultat->bindValue(':firstName', $_GET['firstName']);
@@ -208,7 +208,7 @@ class Salaries extends MyPDO{
     // Peut être rajouter un champ true/false dans la bbd qui lui permettrai ou non de s'afficher dans le findALl 
     // A méditer.
 
-    public function Supprimer(){
+    public function DeleteSalarie(){
 
     }
 

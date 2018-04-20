@@ -36,7 +36,7 @@
 
     <form>
 
-        <div class="form-group">
+        <div class="form-group" method="GET" action="index.php">
 
             <!--Début du tableau -->
             <table class='table table-striped'>
@@ -83,9 +83,9 @@
     
 
 
-    //Si la variable >POST existe on lance la recherche sinon, on affiche tout
-    if(isset($_GET['key']) && !empty($_GET)){
-        $salaries = $instanceSalaries->Rechercher($_GET['key']);
+    //Si la variable POST existe on lance la recherche sinon, on affiche tout
+    if(isset($_GET['key']) && !empty($_GET['key'])){
+        $salaries = $instanceSalaries->FindByLastName($_GET['key']);
     }
     else{
         //Appel de la méthode FindAll
@@ -93,7 +93,16 @@
     }
 
 
+    if(isset($_GET['']) && !empty($_GET['']) OR isset($_GET['']) && !empty($_GET[''])){
 
+        //Lancement de la Modification si Valeur Différente :
+        if($_GET['acquis']!= $salarie->getAcquis OR $_GET['pris'] != $salarie->getPris){
+            $salaries = $instanceSalaries->update($_GET['acquis'], $_GET['pris']);
+        }
+        else{
+            echo "Valeurs inchangés";
+        }
+    }
 
     //Affichage des différentes données des Salariés 
     foreach($salaries as $salarie){
@@ -105,10 +114,11 @@
         echo "<td align='center'>".$salarie->getAddress()."</td>";
         echo "<td align='center'>".$salarie->getDateBegin()."</td>";
         echo "<td align='center'>".$salarie->getDateEnd()."</td>"; 
-        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getAcquis() . " name='key'></td>";       
-        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getPris() . " name='key'></td>";
-        echo "<td align='center'><input class='form-control mr-sm-2' type='submit' value='Modifier'></td>";
+        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value='" . $salarie->getAcquis() . "' name='acquis'></td>";       
+        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getPris() . " name='pris'></td>";
+        echo "<td align='center'><input class='form-control mr-sm-2' type='submit' value='Modifier' name='".$salarie->getId()."'method='GET' action='index.php'></td>";
         echo "</tr>";
+
         
     }
 
