@@ -41,22 +41,22 @@
 
         <div class="form-group col-md-2">
             <label for="exampleInputEmail1">Prénom</label>
-            <input type="Prénom" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Prénom">
+            <input type="Prénom" class="form-control" placeholder="Prénom">
         </div>
 
         <div class="form-group col-md-2">
             <label for="exampleInputEmail1">Nom</label>
-            <input type="Nom" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Nom">
+            <input type="Nom" class="form-control" placeholder="Nom">
         </div>
 
         <div class="form-group col-md-2">
             <label for="exampleInputEmail1">Adresse</label>
-            <input type="Adresse" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Adresse">
+            <input type="Adresse" class="form-control" placeholder="Adresse">
         </div>
 
         <div class="form-group col-md-2">
             <label for="exampleInputEmail1">Date D'embauche</label>
-            <input type="Date D'embauche" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Date D'embauche">
+            <input type="Date D'embauche" class="form-control" placeholder="Date D'embauche">
         </div>
 
         <div class="form-group col-md-2">
