@@ -56,7 +56,7 @@
 
         <div class="form-group col-md-2">
             <label for="exampleInputEmail1">Date D'embauche</label>
-            <input type="Date D'embauche" class="form-control" placeholder="Date D'embauche">
+            <input type="date" class="form-control" placeholder="Date D'embauche">
         </div>
 
         <div class="form-group col-md-2">
