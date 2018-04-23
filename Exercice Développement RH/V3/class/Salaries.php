@@ -190,15 +190,28 @@ class Salaries extends MyPDO{
     }
 
     // Ajouter un Salarié, il commence avec 0 congès acquis 
-    public function AddSalarie($nom, $prenom, $adresse, $dateDebut, $dateFin){
+    public function AddSalarie($lastName, $firstName, $address, $dateBegin){
 
-        $resultat = self::$MyPDO->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
-        $resultat->bindValue(':firstName', $prenom);
-        $resultat->bindValue(':LastName', $nom);
-        $resultat->bindValue(':address', $adresse);
-        $resultat->bindValue(':dateBegin', $dateDebut);
-        $resultat->bindValue(':dateEnd', $dateFin);
+        $acquis = '0';
+        $pris = '0';
+
+        //Ajout des données concernant la table salariés
+        $resultat = self::$MyPDO->prepare('INSERT INTO salaries(firstName, lastName, address, dateBegin) VALUES(:firstName, :lastName, :address, :dateBegin)');
+        $resultat->bindValue(':firstName', $firstName);
+        $resultat->bindValue(':lastName', $lastName);
+        $resultat->bindValue(':address', $address);
+        $resultat->bindValue(':dateBegin', $dateBegin);
         $resultat->execute();
+
+        //Récupération de l'id du salarié
+        $lastId = self::$MyPDO->lastInsertId();
+
+        //Ajout des données concernant le dernier Salarié
+        $resultat2 = self::$MyPDO->prepare('INSERT INTO conges(salaries_id, acquis, pris) VALUES(:salaries_id, :acquis, :pris)');
+        $resultat2->bindValue(':acquis', $acquis);
+        $resultat2->bindValue(':pris', $pris);
+        $resultat2->bindValue(':salaries_id', $lastId);
+        $resultat2->execute();
 
     }
 

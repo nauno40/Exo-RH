@@ -34,38 +34,61 @@
         </div>
     </nav>
 
-    <form class="col-md-10">
+    <form class="col-md-12" method="POST" action="addSalarie.php">
         <br>
         <h1>Ajouter un Salarié</h1>
         <br>
 
         <div class="form-group col-md-2">
-            <label for="exampleInputEmail1">Prénom</label>
-            <input type="Prénom" class="form-control" placeholder="Prénom">
+            <label>Prénom</label>
+            <input type="Prénom" class="form-control" placeholder="Prénom" name="firstName">
         </div>
 
         <div class="form-group col-md-2">
-            <label for="exampleInputEmail1">Nom</label>
-            <input type="Nom" class="form-control" placeholder="Nom">
+            <label>Nom</label>
+            <input type="Nom" class="form-control" placeholder="Nom" name="lastName">
         </div>
 
         <div class="form-group col-md-2">
-            <label for="exampleInputEmail1">Adresse</label>
-            <input type="Adresse" class="form-control" placeholder="Adresse">
+            <label>Adresse</label>
+            <input type="Adresse" class="form-control" placeholder="Adresse" name="address">
         </div>
 
         <div class="form-group col-md-2">
-            <label for="exampleInputEmail1">Date D'embauche</label>
-            <input type="date" class="form-control" placeholder="Date D'embauche">
+            <label>Date D'embauche</label>
+            <input type="date" class="form-control" placeholder="Date D'embauche" name="dateBegin">
         </div>
 
         <div class="form-group col-md-2">
-            <button class="btn bg my-2 my-sm-0" type="submit">Enregister</button>
+            <button class="btn btn-primary my-2 my-sm-0" type="submit">Enregister</button>
         </div>
 
     </form>
 
-    
+
+    <?php
+
+
+        // Si $_POST existe on ajoute les valeurs des champs dans la BDD :
+        if(!empty($_POST) OR !isset($_POST)){
+
+            //Autoload :
+            require 'class/autoloader.php';
+            Autoloader::register();
+
+            //Appel de la classe Salaries
+            $instanceSalaries = new Salaries();
+
+            //Ajout du Salarié :
+            $instanceSalaries->AddSalarie($_POST['lastName'], $_POST['firstName'], $_POST['address'], $_POST['dateBegin']);
+
+            echo "<div class='alert alert-success col-md-2' role='alert'>Le salarié : " . $_POST['firstName'] . " " . $_POST['lastName'] . " à bien été ajouté !</div>";
+            
+        }
+
+
+    ?>
+
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
 </body>

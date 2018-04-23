@@ -185,19 +185,18 @@ class Salaries extends MyPDO{
         $resultat->bindValue(':salaries_id', $id);
         $resultat->execute();
 
-        header('Location: index.php');
+        header('Location: index.php');; ;
 
     }
 
     // Ajouter un Salarié, il commence avec 0 congès acquis 
     public function AddSalarie($nom, $prenom, $adresse, $dateDebut, $dateFin){
 
-        $resultat = self::$MyPDO->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin, dateEnd) VALUES(:firstName, :LastName, :address, :dateBegin, :dateEnd)');
+        $resultat = self::$MyPDO->prepare('INSERT INTO salaries(firstName, LastName, address, dateBegin) VALUES(:firstName, :LastName, :address, :dateBegin)');
         $resultat->bindValue(':firstName', $prenom);
         $resultat->bindValue(':LastName', $nom);
         $resultat->bindValue(':address', $adresse);
         $resultat->bindValue(':dateBegin', $dateDebut);
-        $resultat->bindValue(':dateEnd', $dateFin);
         $resultat->execute();
 
     }
