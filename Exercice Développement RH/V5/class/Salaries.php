@@ -228,9 +228,39 @@ class Salaries extends MyPDO{
         $resultat->bindValue(':id', $id);
         $resultat->execute();
 
-
-        var_dump($id);
-
     }
+
+
+        //Récupération des données présentes dans le tables : "salaries" & "conges" :
+        public function findAllSupp($courantePage,$parPage){
+
+            $all = array();
+    
+            $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND salaries.suppression = 1 ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
+            $resultat->execute();
+            $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
+    
+            //Transformation en Objet;
+            foreach($datas as $data){
+    
+                $salarie = new Salaries();
+                $salarie->setId($data['id']);
+                $salarie->setFirstName($data['firstName']);
+                $salarie->setLastName($data['lastName']);
+                $salarie->setAddress($data['address']);
+                $salarie->setDateBegin($data['dateBegin']);
+                $salarie->setAcquis($data['acquis']);
+                $salarie->setPris($data['pris']);
+    
+                if($data['dateEnd'] == "0000-00-00"){
+                    $salarie->setDateEnd = NULL;
+                }else{
+                    $salarie->setDateEnd($data['dateEnd']);
+                }
+                $all[] = $salarie;
+            }
+            return $all;
+        }
+    
 
 }

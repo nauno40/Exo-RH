@@ -25,6 +25,8 @@
 
                 <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
 
+                <a class="nav-item nav-link" href="SalariesSupp.php">Salariés Supprimés</a>
+
                 <form class="form-inline" method="GET" action="index.php">
                     <input class="form-control mr-sm-2" type="text" placeholder="Rechercher" name="key">
                     <button class="btn bg my-2 my-sm-0" type="submit">Go !</button>
