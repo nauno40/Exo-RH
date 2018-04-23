@@ -74,8 +74,7 @@
     $nbSalaries = $data['nb'];
     $parPage = 6; //Nombre de lignes par page 
     $nbPage = ceil($nbSalaries/$parPage);
-    $courantePage = 1;  //Page courante
-   
+  
     if(isset($_GET['p'])){
         $courantePage = $_GET['p'];
     }

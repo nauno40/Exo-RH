@@ -36,61 +36,120 @@
         </div>
     </nav>
 
-    <form class="col-md-12" method="POST" action="addSalarie.php">
-        <br>
-        <h1>Ajouter un Salarié</h1>
-        <br>
+    <br>
+    <h1>Ajouter un Salarié</h1>
+    <br>
 
-        <div class="form-group col-md-2">
-            <label>Prénom</label>
-            <input type="Prénom" class="form-control" placeholder="Prénom" name="firstName">
+    <div class="container">
+        <div class="row">
+            <form class="col-md-8" method="POST" action="addSalarie.php">
+
+
+                <div class="form-group col-md-3">
+                    <label>Prénom</label>
+                    <input type="Prénom" class="form-control" placeholder="Prénom" name="firstName">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Nom</label>
+                    <input type="Nom" class="form-control" placeholder="Nom" name="lastName">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Adresse</label>
+                    <input type="Adresse" class="form-control" placeholder="Adresse" name="address">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Date D'embauche</label>
+                    <input type="date" class="form-control" placeholder="Date D'embauche" name="dateBegin">
+                </div>
+
+                <div class="form-group col-md-3">
+                    <button class="btn btn-primary my-2 my-sm-0" type="submit">Enregister</button>
+                </div>
+
+            </form>
         </div>
-
-        <div class="form-group col-md-2">
-            <label>Nom</label>
-            <input type="Nom" class="form-control" placeholder="Nom" name="lastName">
-        </div>
-
-        <div class="form-group col-md-2">
-            <label>Adresse</label>
-            <input type="Adresse" class="form-control" placeholder="Adresse" name="address">
-        </div>
-
-        <div class="form-group col-md-2">
-            <label>Date D'embauche</label>
-            <input type="date" class="form-control" placeholder="Date D'embauche" name="dateBegin">
-        </div>
-
-        <div class="form-group col-md-2">
-            <button class="btn btn-primary my-2 my-sm-0" type="submit">Enregister</button>
-        </div>
-
-    </form>
-
-
+    </div>
     <?php
 
 
-        // Si $_POST existe on ajoute les valeurs des champs dans la BDD :
-        if(!empty($_POST) OR !isset($_POST)){
+    //Autoload :
+    require 'class/autoloader.php';
+    Autoloader::register();
 
-            //Autoload :
-            require 'class/autoloader.php';
-            Autoloader::register();
+    //Appel de la classe Salaries
+    $instanceSalaries = new Salaries();
 
-            //Appel de la classe Salaries
-            $instanceSalaries = new Salaries();
 
-            //Ajout du Salarié :
-            $instanceSalaries->AddSalarie($_POST['lastName'], $_POST['firstName'], $_POST['address'], $_POST['dateBegin']);
 
-            echo "<div class='alert alert-success col-md-2' role='alert'>Le salarié : " . $_POST['firstName'] . " " . $_POST['lastName'] . " à bien été ajouté !</div>";
-            
+    if(!empty($_POST)){
+
+        $post = [];
+
+        foreach($_POST as $key => $value){
+            $post[$key] = trim(strip_tags($value));
+        }
+
+        $errors = [];
+
+        if (!isset($post['firstName']) OR empty($post['firstName'])){
+            $errors['firstName'] = "Vous devez rentrer le Prénom du Salarié.";
+        }
+
+        if (!isset($post['lastName']) OR empty($post['lastName'])){
+            $errors['lastName'] = "Vous devez rentrer le Nom du Salarié.";
+        }
+
+        if (!isset($post['address']) OR empty($post['address']) OR strlen($post['address']) < 5){
+            $errors['address'] = "Vous devez rentrer l'adresse du Salarié.";
+        }
+
+        if (!isset($post['dateBegin']) OR empty($post['dateBegin'])){
+            $errors['dateBegin'] = "Vous devez rentrer la date d'embauche du Salarié.";
         }
 
 
-    ?>
 
+        if(!empty($error)){
+
+            //Si pas d'erreurs ajouter les données dans la BBD :
+            $instanceSalaries->AddSalarie($_POST['lastName'], $_POST['firstName'], $_POST['address'], $_POST['dateBegin']);
+
+            echo "<div class='alert alert-success col-md-4' role='alert'>Le salarié : " . $_POST['firstName'] . " " . $_POST['lastName'] . " à bien été ajouté !</div>";
+        }
+        else{
+
+            echo '<div class="container"><div class="row"><div class="alert alert-danger col-lg-4" role="alert">';
+
+            foreach ($errors as $error) {
+                 echo " $error ";
+            }
+
+            echo '</div></div>';
+
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ?>
+        </div>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
 </body>
