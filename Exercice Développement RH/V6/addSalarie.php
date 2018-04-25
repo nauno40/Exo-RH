@@ -25,7 +25,7 @@
 
                 <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
 
-                <a class="nav-item nav-link" href="SalariesSupp.php">Salariés Supprimés</a>
+                <a class="nav-item nav-link" href="index.php?supp=1">Anciens Salariés</a>
 
                 <form class="form-inline" method="GET" action="index.php">
                     <input class="form-control mr-sm-2" type="text" placeholder="Rechercher par Nom" name="key">

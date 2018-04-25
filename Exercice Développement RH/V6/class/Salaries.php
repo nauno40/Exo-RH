@@ -83,13 +83,18 @@ class Salaries extends MyPDO{
         $this->dateEnd = $dateEnd;         
     }
 
-    public function setAcquis($acquis){        
-        $this->acquis = $acquis;         
+    public function setAcquis($acquis){
+        if(!empty($acquis) AND is_numeric($acquis) AND $acquis >= 0){        
+            $this->acquis = $acquis;   
+        }      
     }
 
-    public function setPris($pris){        
-        $this->pris = $pris;         
+    public function setPris($pris){
+        if(is_numeric($pris) AND $pris >= 0){              
+            $this->pris = $pris; 
+        }        
     }
+
 
 
     // __  __      _   _               _      
@@ -109,11 +114,12 @@ class Salaries extends MyPDO{
 
 
     //Récupération des données présentes dans le tables : "salaries" & "conges" :
-    public function findAll($courantePage,$parPage){
+    // Si $i = 0 -> Affiche ceux qui travaillent encore // Si $i = 1 -> Affiche ceux qui ne travaillent plus //
+    public function findAll($courantePage,$parPage,$i){
 
         $all = array();
 
-        $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND salaries.suppression = 0 ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
+        $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND salaries.suppression = $i ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
         $resultat->execute();
         $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
 
@@ -126,14 +132,10 @@ class Salaries extends MyPDO{
             $salarie->setLastName($data['lastName']);
             $salarie->setAddress($data['address']);
             $salarie->setDateBegin($data['dateBegin']);
+            $salarie->setDateEnd($data['dateEnd']);
             $salarie->setAcquis($data['acquis']);
             $salarie->setPris($data['pris']);
 
-            if($data['dateEnd'] == "0000-00-00"){
-                $salarie->setDateEnd = NULL;
-            }else{
-                $salarie->setDateEnd($data['dateEnd']);
-            }
             $all[] = $salarie;
         }
         return $all;
@@ -162,13 +164,8 @@ class Salaries extends MyPDO{
                 $salarie->setDateBegin($data['dateBegin']);
                 $salarie->setAcquis($data['acquis']);
                 $salarie->setPris($data['pris']);
+                $salarie->setDateEnd($data['dateEnd']);
 
-                if($data['dateEnd'] == "0000-00-00"){
-                    $salarie->setDateEnd = NULL;
-                }else{
-                    $salarie->setDateEnd($data['dateEnd']);
-                }
-                $all[] = $salarie;
             }
             return $all;
 
@@ -177,15 +174,17 @@ class Salaries extends MyPDO{
 
 
     // Pouvoir modifier les Congès 
-    public function Update($id, $pris, $acquis){
+    public function Update($id, $pris, $acquis, $date){
 
-        $resultat = self::$MyPDO->prepare('UPDATE conges SET acquis = :acquis, pris = :pris WHERE salaries_id = :salaries_id');
+        $resultat = self::$MyPDO->prepare('UPDATE salaries, conges SET salaries.dateEnd = :dateEnd, conges.acquis = :acquis, conges.pris = :pris WHERE salaries.id = :salaries_id AND conges.salaries_id = :salaries_id');
+
         $resultat->bindValue(':acquis', $acquis);
         $resultat->bindValue(':pris', $pris);
         $resultat->bindValue(':salaries_id', $id);
+        $resultat->bindValue(':dateEnd', $date);
         $resultat->execute();
 
-        header('Location: index.php');
+        //header('Location: index.php');
 
     }
 
@@ -196,7 +195,7 @@ class Salaries extends MyPDO{
         $pris = '0';
 
         //Ajout des données concernant la table salariés
-        $resultat = self::$MyPDO->prepare('INSERT INTO salaries(firstName, lastName, address, dateBegin) VALUES(:firstName, :lastName, :address, :dateBegin)');
+        $resultat = self::$MyPDO->prepare('INSERT INTO $this->tableName(firstName, lastName, address, dateBegin) VALUES(:firstName, :lastName, :address, :dateBegin)');
         $resultat->bindValue(':firstName', $firstName);
         $resultat->bindValue(':lastName', $lastName);
         $resultat->bindValue(':address', $address);
@@ -216,51 +215,13 @@ class Salaries extends MyPDO{
     }
 
     // Pemettre de Supprimer un salarié mais pas définitivement :
-    // Peut être rajouter un champ true/false dans la bbd qui lui permettrai ou non de s'afficher dans le findALl 
-    // A méditer.
+    // Voir pour faire un script ou quand la date de fin est antérieur à la date actuelle, lancer DeleteSalaries
 
-    public function DeleteSalarie($id){
+    public function DeleteSalarie($id, $supp){
 
-        $suppression = 1;
-
-        $resultat = self::$MyPDO->prepare('UPDATE salaries SET suppression = :suppression WHERE id = :id');
-        $resultat->bindValue(':suppression', $suppression);
+        $resultat = self::$MyPDO->prepare('UPDATE $this->tableName SET suppression = :suppression WHERE id = :id');
+        $resultat->bindValue(':suppression', $supp);
         $resultat->bindValue(':id', $id);
         $resultat->execute();
-
     }
-
-
-        //Récupération des données présentes dans le tables : "salaries" & "conges" :
-        public function findAllSupp($courantePage,$parPage){
-
-            $all = array();
-    
-            $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND salaries.suppression = 1 ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
-            $resultat->execute();
-            $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
-    
-            //Transformation en Objet;
-            foreach($datas as $data){
-    
-                $salarie = new Salaries();
-                $salarie->setId($data['id']);
-                $salarie->setFirstName($data['firstName']);
-                $salarie->setLastName($data['lastName']);
-                $salarie->setAddress($data['address']);
-                $salarie->setDateBegin($data['dateBegin']);
-                $salarie->setAcquis($data['acquis']);
-                $salarie->setPris($data['pris']);
-    
-                if($data['dateEnd'] == "0000-00-00"){
-                    $salarie->setDateEnd = NULL;
-                }else{
-                    $salarie->setDateEnd($data['dateEnd']);
-                }
-                $all[] = $salarie;
-            }
-            return $all;
-        }
-    
-
 }

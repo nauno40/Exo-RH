@@ -128,6 +128,7 @@
 
         }
         else{
+
             $instanceSalaries->AddSalarie($_POST['lastName'], $_POST['firstName'], $_POST['address'], $_POST['dateBegin']);
             
             echo "<div class='container'><div class='row'><div class='alert alert-success col-lg-4' role='alert'>Le salarié : " . $_POST['firstName'] . " " . $_POST['lastName'] . " à bien été ajouté !</div></div></div>";

@@ -15,22 +15,23 @@
 
         <a class="navbar-brand" href="index.php">Exercice de Développement RH</a>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+            aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-            
-            <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
 
-            <a class="nav-item nav-link" href="SalariesSupp.php">Salariés Supprimés</a>
+                <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
+    
+                <a class="nav-item nav-link" href="index.php?supp=1">Anciens Salariés</a>
 
-            <form class="form-inline" method="GET" action="index.php">
-                <input class="form-control mr-sm-2" type="text" placeholder="Rechercher par Nom" name="key">
-                <button class="btn bg my-2 my-sm-0" type="submit">Go !</button>
-            </form>
-            
+                <form class="form-inline" method="GET" action="index.php">
+                    <input class="form-control mr-sm-2" type="text" placeholder="Rechercher par Nom" name="key">
+                    <button class="btn bg my-2 my-sm-0" type="submit">Go !</button>
+                </form>
+
             </div>
         </div>
     </nav>
@@ -52,22 +53,25 @@
                     <th>Congès Pris</th>
                     <th>Congès Acquis</th>
                     <th>Modifications</th>
-                    <th>Suppression</th>
                 </tr>
 
 
-    <!-- Attention /!\ Zone PHP -->
-    <?php
+                <!-- Attention /!\ Zone PHP -->
+                <?php
+
+
+
+
+
+
+
 
     //Autoload :
     require 'class/autoloader.php';
     Autoloader::register();
 
-
     //Appel de la classe Salaries
     $instanceSalaries = new Salaries();
-
-
 
     //Pagination Réalisation :
     $data = $instanceSalaries->count();
@@ -82,42 +86,61 @@
         $courantePage = 1;
     }
 
+
+
+ 
+
+
+
     
-
-
     //Si la variable GET existe on lance la recherche sinon, on affiche tout
     if(isset($_GET['key']) && !empty($_GET['key'])){
         $salaries = $instanceSalaries->FindByLastName($_GET['key']);
     }
+    //Si Supp est lancé, on affiche les salariés avec Suppression = 1
+    elseif(isset($_GET['supp'])){
+        $salaries = $instanceSalaries->findAll($courantePage, $parPage, 1);
+    }
     else{
-        //Appel de la méthode FindAll
-        $salaries = $instanceSalaries->findAll($courantePage, $parPage);
+    //Sinon Appel de la méthode FindAll
+        $salaries = $instanceSalaries->findAll($courantePage, $parPage, 0);
     }
 
+    
 
 
+
+
+
+    //Si l'on récupère l'id du Salarie, Alors :
     if(isset($_GET['salarie_id'])){
-    // Déclaration des variables contenant les congès Pris & Acquis :
-    $acquis = $_GET['acquis'];
-    $pris = $_GET['pris'];
-    $id = $_GET['salarie_id'];
 
-    $instanceSalaries->Update($id, $pris, $acquis);
+        // Déclaration des variables contenant les congès Pris & Acquis :
+        $acquis = $_GET['acquis'];
+        $pris = $_GET['pris'];        // $date = $_GET['dateEnd'];
+        $date = $_GET['dateEnd'];
+        $id = $_GET['salarie_id'];
 
+        // Si la date d'aujourd'hui est postérieur à celle dans la BBD :
+        if(date('Y-m-d') > $date){
+            $instanceSalaries->DeleteSalarie($id, 1);
+        }
+        elseif(date('Y-m-d') <= $date OR $date = "0000-00-00"){
+            $instanceSalaries->DeleteSalarie($id, 0);
+        }
+
+
+        //Instanciation de la MAJ :
+        $instanceSalaries->Update($id, $pris, $acquis, $date);
     }
 
 
-    if(!isset($_POST) or empty($_POST)){
-        //Nothing ...
-    }
-    else{
-        $idSalarie = $_POST['id'];
-        $supprimer = $instanceSalaries->DeleteSalarie($idSalarie);
-    }
-  
 
 
-    //Affichage des différentes données des Salariés 
+
+
+
+    //Affichage des différentes données des Salariés :
     foreach($salaries as $salarie){
         
         echo "<tr>";
@@ -127,26 +150,21 @@
         echo "<td align='center'>".$salarie->getLastName()."</td>";
         echo "<td align='center'>".$salarie->getAddress()."</td>";
         echo "<td align='center'>".$salarie->getDateBegin()."</td>";
-        echo "<td align='center'>".$salarie->getDateEnd()."</td>"; 
 
         echo "<form method='GET' action='index.php'>";
         echo "<input type='hidden' name='salarie_id' value='" . $salarie->getId() . "'>";
-        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value=" . $salarie->getPris() . " name='pris'></td>";
+        echo "<td align='center'><input class='form-control col-md' type='date' value='" . $salarie->getDateEnd() . "' name='dateEnd'></td>";
+        echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value='" . $salarie->getPris() . "' name='pris'></td>";
         echo "<td align='center'><input class='form-control -sm col-md-3' type='text' value='" . $salarie->getAcquis() . "' name='acquis'></td>";       
         echo "<td align='center'><input class='form-control mr-sm-2' type='submit' value='Modifier'></td>";
         echo "</form>";
 
-        echo "<form method='POST' action='index.php'>";
-        echo "<input type='hidden' name='id' value='" . $salarie->getId() . "'>";
-        echo "<td align='center'><input class='form-control mr-sm-2' type='submit' value='Supprimer'></td>";
-        echo "</form>";
-
         echo "</tr>";
-
-    
     }
 
-    
+
+
+
 
     ?>
             </table>
