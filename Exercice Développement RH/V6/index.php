@@ -24,7 +24,7 @@
             <div class="navbar-nav">
 
                 <a class="nav-item nav-link" href="addSalarie.php">Ajouter</a>
-    
+
                 <a class="nav-item nav-link" href="index.php?supp=1">Anciens Salariés</a>
 
                 <form class="form-inline" method="GET" action="index.php">
@@ -60,12 +60,6 @@
                 <?php
 
 
-
-
-
-
-
-
     //Autoload :
     require 'class/autoloader.php';
     Autoloader::register();
@@ -73,8 +67,19 @@
     //Appel de la classe Salaries
     $instanceSalaries = new Salaries();
 
+
+
+
     //Pagination Réalisation :
-    $data = $instanceSalaries->count();
+
+    if(isset($_GET['supp'])){
+        $data = $instanceSalaries->count(1);
+    }
+    else{
+    //Sinon Appel de la méthode FindAll
+        $data = $instanceSalaries->count(0);
+    }
+    
     $nbSalaries = $data['nb'];
     $parPage = 6; //Nombre de lignes par page 
     $nbPage = ceil($nbSalaries/$parPage);
@@ -85,12 +90,6 @@
     else{
         $courantePage = 1;
     }
-
-
-
- 
-
-
 
     
     //Si la variable GET existe on lance la recherche sinon, on affiche tout
@@ -108,35 +107,13 @@
 
     
 
-
-
-
-
     //Si l'on récupère l'id du Salarie, Alors :
     if(isset($_GET['salarie_id'])){
 
-        // Déclaration des variables contenant les congès Pris & Acquis :
-        $acquis = $_GET['acquis'];
-        $pris = $_GET['pris'];        // $date = $_GET['dateEnd'];
-        $date = $_GET['dateEnd'];
-        $id = $_GET['salarie_id'];
-
-        // Si la date d'aujourd'hui est postérieur à celle dans la BBD :
-        if(date('Y-m-d') > $date){
-            $instanceSalaries->DeleteSalarie($id, 1);
-        }
-        elseif(date('Y-m-d') <= $date OR $date = "0000-00-00"){
-            $instanceSalaries->DeleteSalarie($id, 0);
-        }
-
-
         //Instanciation de la MAJ :
-        $instanceSalaries->Update($id, $pris, $acquis, $date);
+        $instanceSalaries->Update($_GET['salarie_id'], $_GET['pris'], $_GET['acquis'], $_GET['dateEnd']);
+
     }
-
-
-
-
 
 
 
@@ -165,7 +142,6 @@
 
 
 
-
     ?>
             </table>
 
@@ -174,7 +150,13 @@
                 <li class="page-item disabled">
                     <?php
                         for($i=1;$i<=$nbPage;$i++){
-                            echo "<li class='page-item'><a class='page-link' href='index.php?p=$i'> $i </a>";
+
+                            if(isset($_GET['supp'])){
+                                echo "<li class='page-item'><a class='page-link' href='index.php?supp=1&p=$i'> $i </a>";
+                            }
+                            else{
+                                echo "<li class='page-item'><a class='page-link' href='index.php?p=$i'> $i </a>";
+                            }
                         }
                     ?>
                 </li>

@@ -2,22 +2,20 @@
 
 class Salaries extends MyPDO{
 
-    //déclaration des attributs
+    //Déclaration des attributs
     private $id;
     private $firstName;
     private $lastName;
     private $address;
     private $dateBegin;
     private $dateEnd;
+    private $suppression;
     private $acquis;
     private $pris;
     private $tableName = 'salaries';
     
 
-
-
-
-    //Déclaration des Getters 
+    //Déclaration des Getters :
     public function getId(){
         return $this->id;
     }
@@ -42,6 +40,10 @@ class Salaries extends MyPDO{
         return $this->dateEnd;
     }    
 
+    public function getSuppression(){
+        return $this->suppression;
+    }
+
     public function getAcquis(){
         return $this->acquis;
     }
@@ -50,7 +52,7 @@ class Salaries extends MyPDO{
         return $this->pris;
     }
 
-    //setters
+    //Déclaration des Setters :
     public function setId($id){
         if(!empty($id) AND is_numeric($id)){
             $this->id = $id;
@@ -83,6 +85,10 @@ class Salaries extends MyPDO{
         $this->dateEnd = $dateEnd;         
     }
 
+    public function setSuppression($suppression){        
+        $this->suppression = $suppression;         
+    }
+
     public function setAcquis($acquis){
         if(!empty($acquis) AND is_numeric($acquis) AND $acquis >= 0){        
             $this->acquis = $acquis;   
@@ -96,20 +102,21 @@ class Salaries extends MyPDO{
     }
 
 
-
     // __  __      _   _               _      
     // |  \/  | ___| |_| |__   ___   __| | ___ 
     // | |\/| |/ _ \ __| '_ \ / _ \ / _` |/ _ \
     // | |  | |  __/ |_| | | | (_) | (_| |  __/
     // |_|  |_|\___|\__|_| |_|\___/ \__,_|\___|
-                                            
+                        
    
     // Permet d'avoir une pagination automatique 
-    public function count(){
-        $resultat = self::$MyPDO->prepare("SELECT COUNT(id) as nb FROM $this->tableName");
+    public function count($supp){
+        $resultat = self::$MyPDO->prepare("SELECT COUNT(id) AS nb FROM $this->tableName WHERE suppression = :supp");
+        $resultat->bindValue(':supp', $supp);
         $resultat->execute();
         $data = $resultat->fetch(PDO::FETCH_ASSOC);
         return $data;
+        var_dump($data);
     }
 
 
@@ -122,6 +129,7 @@ class Salaries extends MyPDO{
         $resultat = self::$MyPDO->prepare("SELECT * FROM $this->tableName INNER JOIN conges WHERE salaries.id = conges.salaries_id AND salaries.suppression = $i ORDER BY id LIMIT ".(($courantePage-1)*$parPage)." ,$parPage");
         $resultat->execute();
         $datas = $resultat->fetchAll(PDO::FETCH_ASSOC);
+
 
         //Transformation en Objet;
         foreach($datas as $data){
@@ -172,7 +180,6 @@ class Salaries extends MyPDO{
     }
 
 
-
     // Pouvoir modifier les Congès 
     public function Update($id, $pris, $acquis, $date){
 
@@ -184,9 +191,21 @@ class Salaries extends MyPDO{
         $resultat->bindValue(':dateEnd', $date);
         $resultat->execute();
 
-        //header('Location: index.php');
+        //Vérification du statut actuel de l'employé
+        $instanceSalaries = new Salaries();
 
+        // Si la date d'aujourd'hui est postérieur à celle dans la BBD :
+        if(date('Y-m-d') > $date){
+            $instanceSalaries->DeleteSalarie($_GET['salarie_id'], 1);
+            echo "serhvbrthjedt";
+        }
+        elseif(date('Y-m-d') <= $date OR $date = "0000-00-00"){
+            $instanceSalaries->DeleteSalarie($_GET['salarie_id'], 0);
+        }
+
+        header('Location: index.php');
     }
+
 
     // Ajouter un Salarié, il commence avec 0 congès acquis 
     public function AddSalarie($lastName, $firstName, $address, $dateBegin){
@@ -214,14 +233,18 @@ class Salaries extends MyPDO{
 
     }
 
+
     // Pemettre de Supprimer un salarié mais pas définitivement :
     // Voir pour faire un script ou quand la date de fin est antérieur à la date actuelle, lancer DeleteSalaries
-
     public function DeleteSalarie($id, $supp){
 
-        $resultat = self::$MyPDO->prepare('UPDATE $this->tableName SET suppression = :suppression WHERE id = :id');
+        $resultat = self::$MyPDO->prepare('UPDATE salaries SET salaries.suppression = :suppression WHERE salaries.id = :id');
         $resultat->bindValue(':suppression', $supp);
         $resultat->bindValue(':id', $id);
         $resultat->execute();
+
     }
+
+
+    
 }
