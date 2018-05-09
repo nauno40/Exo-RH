@@ -100,19 +100,19 @@
         $errors = [];
 
         if (!isset($post['firstName']) OR empty($post['firstName'])){
-            $errors['firstName'] = "Vous devez rentrer le Prénom du Salarié.";
+            $errors['firstName'] = " le Prénom,";
         }
 
         if (!isset($post['lastName']) OR empty($post['lastName'])){
-            $errors['lastName'] = "Vous devez rentrer le Nom du Salarié.";
+            $errors['lastName'] = " le Nom,";
         }
 
         if (!isset($post['address']) OR empty($post['address']) OR strlen($post['address']) < 5){
-            $errors['address'] = "Vous devez rentrer l'adresse du Salarié.";
+            $errors['address'] = " l'adresse,";
         }
 
         if (!isset($post['dateBegin']) OR empty($post['dateBegin'])){
-            $errors['dateBegin'] = "Vous devez rentrer la date d'embauche du Salarié.";
+            $errors['dateBegin'] = " la date d'embauche,";
         }
 
 
@@ -121,9 +121,11 @@
 
         // Si $error contient des données alors, on affiche les différentes erreurs : 
         echo '<div class="container"><div class="row"><div class="alert alert-danger col-lg-4" role="alert">';
+        echo "Vous devez rentrer";
         foreach ($errors as $error) {
-            echo " $error ";
+            echo $error;
         }
+        echo " du Salarié.";
         echo '</div></div></div>';
 
         }
